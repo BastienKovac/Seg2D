@@ -52,45 +52,37 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	int inc=0; // number of Ellipses accepted
 
 	bool inter; // result of the intersection of 2 Ellipses
-	int ind,pos,tinc,tda;
+	int ind,pos;
 
 	// grid 
 	int nb_rows = ceil(size_y/a_max);
 	int nb_col = ceil(size_x/a_max);
 
 	//TODO Paralléliser
-	#pragma omp parallel private(inter,ind,pos,tinc,tda)
 	{
 		while ((inc<nb_ell) & (dont_accepted<nb_dont_accepted)){
-			#pragma omp critical
-			{
-				tinc = inc;
-				tda = dont_accepted;
-			}
 			// generation of a new Ellipse
 			Ellips new_ell(a_min,a_max,size_x,size_y);
 			pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
 
 			inter=false;
 			ind=0;
-			while ((inter==false) & (ind < tinc)){
+			while ((inter==false) & (ind < inc)){
 				if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
 					inter=intersect(config[ind],new_ell);
 				}
 				ind++;
 			}
 			if (!(inter)){ // we keep the Ellipse
-				#pragma omp critical
 				{
-					config[tinc]=new_ell;
-					data_fit[tinc]=new_ell.data_fiting(img,size_x,size_y,d);
-					position[tinc]=pos;
+					config[inc]=new_ell;
+					data_fit[inc]=new_ell.data_fiting(img,size_x,size_y,d);
+					position[inc]=pos;
 					inc++;
 					dont_accepted=0;
 				}
 			}
 			else {
-				#pragma omp critical
 				{
 					dont_accepted++;
 				}

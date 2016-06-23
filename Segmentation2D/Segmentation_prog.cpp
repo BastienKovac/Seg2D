@@ -15,6 +15,7 @@ Description:
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <ctime>
 #include <fstream>
 #include "Class_Ellips/Ellips.h"
 #include "Graph_Cut/graph.h"
@@ -38,6 +39,7 @@ int main (int argc, char ** argv)
 {
 	clock_t start, end;
 	double cpuTime;
+	time_t t = time(NULL);
 
 	start = clock();
 
@@ -65,7 +67,7 @@ int main (int argc, char ** argv)
 	int nb_ell_dont_accepted, nb_ell_tot, nb_ell_config, nb_ell_new_config;
 	double a_min,a_max,min_val,max_val;
 	float flow;
-	int choice,node,i,j,stop;
+	int choice,i,j,stop;
 	Configuration config,new_config,temp;
 	double d,sigma; //acceptance threshold
 
@@ -198,51 +200,53 @@ int main (int argc, char ** argv)
 
 			if (fmod(float(k),1000)==0){
 				cout << "Iteration : " << k << endl;
+				cout << "Total execution time : " << difftime(time(NULL), t)<< "s"<<endl;
 				string file_name = "Segmentation_"+ name + ".txt";
-				config.save_config(file_name);
-				print = cvCreateImage(cvGetSize(img), 8, 3);
-				cvCvtColor(img, print, CV_GRAY2BGR);
 
-				#pragma omp parallel for
-				for (int z=0 ; z < nb_ell_config ; z++){
-					#pragma omp critical
-					{
-						cvEllipse( print, cvPoint(config.get_Ellips(z).get_cx(),config.get_Ellips(z).get_cy()), cvSize(config.get_Ellips(z).get_a(),config.get_Ellips(z).get_b()), -config.get_Ellips(z).get_theta()*360/(2*M_PI), 0, 360, CV_RGB(0, 0, 255), 1, 8, 0);
+				// Parallelizing image's display
+				#pragma omp parallel num_threads(1) firstprivate(config)
+				{
+					config.save_config(file_name);
+					print = cvCreateImage(cvGetSize(img), 8, 3);
+					cvCvtColor(img, print, CV_GRAY2BGR);
+
+					for (int z=0 ; z < nb_ell_config ; z++){
+						{
+							cvEllipse( print, cvPoint(config.get_Ellips(z).get_cx(),config.get_Ellips(z).get_cy()), cvSize(config.get_Ellips(z).get_a(),config.get_Ellips(z).get_b()), -config.get_Ellips(z).get_theta()*360/(2*M_PI), 0, 360, CV_RGB(0, 0, 255), 1, 8, 0);
+						}
 					}
+					cvShowImage (window_title, print);
+					cvWaitKey(1);
+					cvReleaseImage(&print);
 				}
-				cvShowImage (window_title, print);
-				cvWaitKey(1);
-				cvReleaseImage(&print);
+
 			}
 
 			//---- Add nodes to the graph
 			g -> add_node(nb_ell_tot);
 
 			//---- Add the weights of the different edges
-			node=0;
-
-			//TODO Paralléliser
+			#pragma omp parallel for
 			for (i = 0 ; i < nb_ell_config ; i++){
-				g -> add_tweights( node,   /* capacities */  config.get_data_fit(i), 1-config.get_data_fit(i) );
-				#pragma omp parallel for schedule(dynamic)
+				g -> add_tweights( i,   /* capacities */  config.get_data_fit(i), 1-config.get_data_fit(i) );
+				#pragma omp parallel for
 				for (j = 0 ; j < nb_ell_new_config ; j++){
 					if (is_neighbor(config.get_position(i),new_config.get_position(j),nb_rows,nb_col,a_max)){
 						if(intersect(config.get_Ellips(i),new_config.get_Ellips(j))){
-							#pragma omp critical
 							{
-								g -> add_edge( node , nb_ell_config + j,    /* capacities */  inf, 0 );
+								g -> add_edge( i , nb_ell_config + j,    /* capacities */  inf, 0 );
 							}
 						}
 					}
 				}
-				node++;
 			}
 
-			//TODO Paralléliser
+			#pragma omp parallel for
 			for (i = 0 ; i < nb_ell_new_config ; i++){
-				g -> add_tweights( node,   /* capacities */  1-new_config.get_data_fit(i), new_config.get_data_fit(i) );
-				node++;
+				g -> add_tweights( nb_ell_config + i,   /* capacities */  1-new_config.get_data_fit(i), new_config.get_data_fit(i) );
 			}
+
+			// TODO -> From here
 
 			//---- Compute the max flow of the graph
 			flow = g -> maxflow();
@@ -257,13 +261,11 @@ int main (int argc, char ** argv)
 			if (i<nb_ell_config){
 				config=Configuration(temp.get_Ellips(i),temp.get_position(i),temp.get_data_fit(i),nb_ell_tot);
 				i++;
-				//TODO Paralléliser
 				for ( ; i<nb_ell_config ; i++){
 					if(g->what_segment(i) == GraphType::SOURCE ){
 						config.add_Ellips(temp.get_Ellips(i),temp.get_position(i),temp.get_data_fit(i));
 					}
 				}
-				//TODO Paralléliser
 				for( ; i< nb_ell_tot ; i++){
 					if(g->what_segment(i) == GraphType::SINK){
 						config.add_Ellips(new_config.get_Ellips(i-nb_ell_config),new_config.get_position(i-nb_ell_config),new_config.get_data_fit(i-nb_ell_config));
