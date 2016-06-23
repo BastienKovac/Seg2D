@@ -30,7 +30,6 @@ Description:
 
 #include <blas.h>
 #include <lapacke.h>
-<<<<<<< HEAD
 #include <omp.h>
 
 using namespace std;
@@ -265,7 +264,7 @@ int main (int argc, char ** argv)
 					}
 				}
 				//TODO Paralléliser
-=======
+
 using namespace std;
 
 int main (int argc, char ** argv)
@@ -483,7 +482,6 @@ int main (int argc, char ** argv)
 						config.add_Ellips(temp.get_Ellips(i),temp.get_position(i),temp.get_data_fit(i));
 					}
 				}
->>>>>>> branch 'master' of https://github.com/BastienKovac/Segmentation2D
 				for( ; i< nb_ell_tot ; i++){
 					if(g->what_segment(i) == GraphType::SINK){
 						config.add_Ellips(new_config.get_Ellips(i-nb_ell_config),new_config.get_position(i-nb_ell_config),new_config.get_data_fit(i-nb_ell_config));
