@@ -11,7 +11,6 @@
 #include <math.h>
 #include "../other_functions/other_functions.h"
 #include <string>
-<<<<<<< HEAD
 #include <omp.h>
 
 using namespace std;
@@ -119,8 +118,6 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	int nb_rows = ceil(size_y/a_max);
 	int nb_col = ceil(size_x/a_max);
 
-=======
-
 using namespace std;
 
 Configuration:: Configuration()
@@ -211,7 +208,6 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	// grid 
 	int nb_rows = ceil(size_y/a_max);
 	int nb_col = ceil(size_x/a_max);
->>>>>>> branch 'master' of https://github.com/BastienKovac/Segmentation2D
 
 	while ((inc<nb_ell) & (dont_accepted<nb_dont_accepted)){
 		// generation of a new Ellipse
