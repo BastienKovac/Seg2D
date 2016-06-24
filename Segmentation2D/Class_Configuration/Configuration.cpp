@@ -58,37 +58,34 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	int nb_rows = ceil(size_y/a_max);
 	int nb_col = ceil(size_x/a_max);
 
-	//TODO Paralléliser
-	{
-		while ((inc<nb_ell) & (dont_accepted<nb_dont_accepted)){
-			// generation of a new Ellipse
-			Ellips new_ell(a_min,a_max,size_x,size_y);
-			pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
+	while ((inc<nb_ell) & (dont_accepted<nb_dont_accepted)){
+		// generation of a new Ellipse
+		Ellips new_ell(a_min,a_max,size_x,size_y);
+		pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
 
-			inter=false;
-			ind=0;
-			while ((inter==false) & (ind < inc)){
-				if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
-					inter=intersect(config[ind],new_ell);
-				}
-				ind++;
+		inter=false;
+		ind=0;
+		while ((inter==false) & (ind < inc)){
+			if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
+				inter=intersect(config[ind],new_ell);
 			}
-			if (!(inter)){ // we keep the Ellipse
-				{
-					config[inc]=new_ell;
-					data_fit[inc]=new_ell.data_fiting(img,size_x,size_y,d);
-					position[inc]=pos;
-					inc++;
-					dont_accepted=0;
-				}
+			ind++;
+		}
+		if (!(inter)){ // we keep the Ellipse
+			{
+				config[inc]=new_ell;
+				data_fit[inc]=new_ell.data_fiting(img,size_x,size_y,d);
+				position[inc]=pos;
+				inc++;
+				dont_accepted=0;
 			}
-			else {
-				{
-					dont_accepted++;
-				}
-			} // if (!(inter))
-		} // while ((inc<50) & (dont_accepted<10))
-	}
+		}
+		else {
+			{
+				dont_accepted++;
+			}
+		} // if (!(inter))
+	} // while ((inc<50) & (dont_accepted<10))
 
 	nb_Ellipses=inc;
 	size=inc;
