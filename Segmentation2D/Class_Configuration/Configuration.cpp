@@ -67,7 +67,7 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 
 //		inter=false;
 //		//ind=-1;
-//		#pragma omp parallel for private(t_inter/*, t_ind*/) firstprivate(pos,nb_rows,nb_col,a_max,new_ell)
+//		#pragma omp parallel for private(t_inter/*, t_ind*/)
 //			//t_ind=ind;
 //			for(int ind = 0; ind < inc; ind++){
 ////			while ((inter==false) & (t_ind < inc-1)){
