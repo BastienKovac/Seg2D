@@ -49,45 +49,80 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	data_fit = new double[nb_ell];
 
 	int dont_accepted=0; // number of Ellipses which aren't accepted
-	int inc=0; // number of Ellipses accepted
+	int inc;//=0; // number of Ellipses accepted
 
-	bool inter; // result of the intersection of 2 Ellipses
-	int ind,pos;
+	bool inter, t_inter; // result of the intersection of 2 Ellipses
+	int ind,pos, t_ind, t_inc;
 
 	// grid 
 	int nb_rows = ceil(size_y/a_max);
 	int nb_col = ceil(size_x/a_max);
 
-	//TODO Paralléliser
-	{
-		while ((inc<nb_ell) & (dont_accepted<nb_dont_accepted)){
-			// generation of a new Ellipse
-			Ellips new_ell(a_min,a_max,size_x,size_y);
-			pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
+	Ellips new_ell;
 
-			inter=false;
-			ind=0;
-			while ((inter==false) & (ind < inc)){
-				if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
-					inter=intersect(config[ind],new_ell);
-				}
-				ind++;
+	while ((inc<nb_ell) & (dont_accepted<nb_dont_accepted)){
+		// generation of a new Ellipse
+		Ellips new_ell(a_min,a_max,size_x,size_y);
+		pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
+
+//		inter=false;
+//		ind=-1;
+//		#pragma omp parallel for private(t_inter, t_ind)
+//			//t_ind=ind;
+//			for(ind = 0; ind < inc; ind++){
+////			while ((inter==false) & (t_ind < inc-1)){
+////				#pragma omp critical
+////				{
+////					ind++;
+////					t_ind = ind;
+////				}
+////				if(t_ind < inc){
+//				if(!inter){
+//					if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
+//						t_inter=intersect(config[ind],new_ell);
+//					}
+//
+//					if(t_inter){
+//						inter=true;
+//						#pragma omp flush(inter)
+//					}
+//				}
+//			}
+
+		inter=false;
+		ind=0;
+		while ((inter==false) & (ind < inc)){
+			if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
+				inter=intersect(config[ind],new_ell);
 			}
-			if (!(inter)){ // we keep the Ellipse
-				{
-					config[inc]=new_ell;
-					data_fit[inc]=new_ell.data_fiting(img,size_x,size_y,d);
-					position[inc]=pos;
-					inc++;
-					dont_accepted=0;
-				}
+			ind++;
+		}
+
+//		if(inter){
+//			cout<<"true"<<endl;
+//		}else{
+//			cout<<"false"<<endl;
+//		}
+
+		if (!(inter)){ // we keep the Ellipse
+			{
+				config[inc]=new_ell;
+				//data_fit[inc]=new_ell.data_fiting(img,size_x,size_y,d);
+				position[inc]=pos;
+				inc++;
+				dont_accepted=0;
 			}
-			else {
-				{
-					dont_accepted++;
-				}
-			} // if (!(inter))
-		} // while ((inc<50) & (dont_accepted<10))
+		}
+		else {
+			{
+				dont_accepted++;
+			}
+		} // if (!(inter))
+	} // while ((inc<50) & (dont_accepted<10))
+
+	#pragma omp parallel for
+	for(int i = 0; i < inc; i++){
+		data_fit[i] = config[i].data_fiting(img,size_x,size_y,d);
 	}
 
 	nb_Ellipses=inc;
