@@ -49,19 +49,89 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	data_fit = new double[nb_ell];
 
 	int dont_accepted=0; // number of Ellipses which aren't accepted
-	int inc=0; // number of Ellipses accepted
+	int inc;//=0; // number of Ellipses accepted
 
-	bool inter; // result of the intersection of 2 Ellipses
-	int ind,pos;
+	bool inter, t_inter; // result of the intersection of 2 Ellipses
+	int ind,pos, t_ind, t_inc;
 
 	// grid 
 	int nb_rows = ceil(size_y/a_max);
 	int nb_col = ceil(size_x/a_max);
 
+	Ellips new_ell;
+
+//	#pragma omp parallel for private(inter, ind, pos, new_ell, t_inc) ordered
+//	for(inc = 0; inc < nb_ell; inc++){
+//		t_inc = inc;
+//		inter=true;
+//		#pragma omp ordered
+//		{
+//			while(inter){
+//				// generation of a new Ellipse
+//				new_ell = Ellips(a_min,a_max,size_x,size_y);
+//				pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
+//				inter=false;
+//				ind=-1;
+//				#pragma omp parallel private(t_inter, t_ind)
+//				{
+//					t_ind=ind;
+//					t_inter=false;
+//					while (!(inter) & (t_ind < t_inc-1)){
+//						#pragma omp critical
+//						{
+//							ind++;
+//							t_ind = ind;
+//						}
+//						if(t_ind < t_inc){
+//							if (is_neighbor(pos,position[t_ind],nb_rows,nb_col,a_max)){
+//								t_inter=intersect(config[t_ind],new_ell);
+//							}
+//						}
+//						if(t_inter){
+//							inter=true;
+//							#pragma omp flush(inter)
+//						}
+//					}
+//				}
+//			}
+//			if (!(inter)){ // we keep the Ellipse
+//				config[t_inc]=new_ell;
+//				data_fit[t_inc]=new_ell.data_fiting(img,size_x,size_y,d);
+//				position[t_inc]=pos;
+//			}
+//		}
+//		cout<<t_inc<<endl;
+//		Sleep(10);
+//	}
+
 	while ((inc<nb_ell) & (dont_accepted<nb_dont_accepted)){
 		// generation of a new Ellipse
 		Ellips new_ell(a_min,a_max,size_x,size_y);
 		pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
+
+//		inter=false;
+//		ind=-1;
+//		#pragma omp parallel private(t_inter, t_ind)
+//		{
+//			t_ind=ind;
+//			while ((inter==false) & (t_ind < inc-1)){
+//				#pragma omp critical
+//				{
+//					ind++;
+//					t_ind = ind;
+//				}
+//				if(t_ind < inc){
+//					if (is_neighbor(pos,position[t_ind],nb_rows,nb_col,a_max)){
+//						t_inter=intersect(config[t_ind],new_ell);
+//					}
+//
+//					if(t_inter){
+//						inter=true;
+//						#pragma omp flush(inter)
+//					}
+//				}
+//			}
+//		}
 
 		inter=false;
 		ind=0;
@@ -71,6 +141,13 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 			}
 			ind++;
 		}
+
+//		if(inter){
+//			cout<<"true"<<endl;
+//		}else{
+//			cout<<"false"<<endl;
+//		}
+
 		if (!(inter)){ // we keep the Ellipse
 			{
 				config[inc]=new_ell;

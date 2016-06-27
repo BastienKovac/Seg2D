@@ -204,12 +204,13 @@ int main (int argc, char ** argv)
 				string file_name = "Segmentation_"+ name + ".txt";
 
 				// Parallelizing image's display
-				//#pragma omp parallel num_threads(1) firstprivate(config)
+				#pragma omp parallel num_threads(1) firstprivate(config)
 				{
 					config.save_config(file_name);
 					print = cvCreateImage(cvGetSize(img), 8, 3);
 					cvCvtColor(img, print, CV_GRAY2BGR);
 
+					//#pragma omp parallel for
 					for (int z=0 ; z < nb_ell_config ; z++){
 						{
 							cvEllipse( print, cvPoint(config.get_Ellips(z).get_cx(),config.get_Ellips(z).get_cy()), cvSize(config.get_Ellips(z).get_a(),config.get_Ellips(z).get_b()), -config.get_Ellips(z).get_theta()*360/(2*M_PI), 0, 360, CV_RGB(0, 0, 255), 1, 8, 0);
@@ -226,10 +227,10 @@ int main (int argc, char ** argv)
 			g -> add_node(nb_ell_tot);
 
 			//---- Add the weights of the different edges
-			//#pragma omp parallel for
+			#pragma omp parallel for
 			for (i = 0 ; i < nb_ell_config ; i++){
 				g -> add_tweights( i,   /* capacities */  config.get_data_fit(i), 1-config.get_data_fit(i) );
-				//#pragma omp parallel for
+				#pragma omp parallel for
 				for (j = 0 ; j < nb_ell_new_config ; j++){
 					if (is_neighbor(config.get_position(i),new_config.get_position(j),nb_rows,nb_col,a_max)){
 						if(intersect(config.get_Ellips(i),new_config.get_Ellips(j))){
@@ -241,7 +242,7 @@ int main (int argc, char ** argv)
 				}
 			}
 
-			//#pragma omp parallel for
+			#pragma omp parallel for
 			for (i = 0 ; i < nb_ell_new_config ; i++){
 				g -> add_tweights( nb_ell_config + i,   /* capacities */  1-new_config.get_data_fit(i), new_config.get_data_fit(i) );
 			}
