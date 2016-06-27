@@ -111,18 +111,19 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 
 //		inter=false;
 //		ind=-1;
-//		#pragma omp parallel private(t_inter, t_ind)
-//		{
-//			t_ind=ind;
-//			while ((inter==false) & (t_ind < inc-1)){
-//				#pragma omp critical
-//				{
-//					ind++;
-//					t_ind = ind;
-//				}
-//				if(t_ind < inc){
-//					if (is_neighbor(pos,position[t_ind],nb_rows,nb_col,a_max)){
-//						t_inter=intersect(config[t_ind],new_ell);
+//		#pragma omp parallel for private(t_inter, t_ind)
+//			//t_ind=ind;
+//			for(ind = 0; ind < inc; ind++){
+////			while ((inter==false) & (t_ind < inc-1)){
+////				#pragma omp critical
+////				{
+////					ind++;
+////					t_ind = ind;
+////				}
+////				if(t_ind < inc){
+//				if(!inter){
+//					if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
+//						t_inter=intersect(config[ind],new_ell);
 //					}
 //
 //					if(t_inter){
@@ -131,7 +132,6 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 //					}
 //				}
 //			}
-//		}
 
 		inter=false;
 		ind=0;
@@ -151,7 +151,7 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 		if (!(inter)){ // we keep the Ellipse
 			{
 				config[inc]=new_ell;
-				data_fit[inc]=new_ell.data_fiting(img,size_x,size_y,d);
+				//data_fit[inc]=new_ell.data_fiting(img,size_x,size_y,d);
 				position[inc]=pos;
 				inc++;
 				dont_accepted=0;
@@ -163,6 +163,11 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 			}
 		} // if (!(inter))
 	} // while ((inc<50) & (dont_accepted<10))
+
+	#pragma omp parallel for
+	for(int i = 0; i < inc; i++){
+		data_fit[i] = config[i].data_fiting(img,size_x,size_y,d);
+	}
 
 	nb_Ellipses=inc;
 	size=inc;
