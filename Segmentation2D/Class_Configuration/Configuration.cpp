@@ -65,37 +65,37 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 		Ellips new_ell(a_min,a_max,size_x,size_y);
 		pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
 
-		inter=false;
-		//ind=-1;
-		#pragma omp parallel for private(t_inter/*, t_ind*/)
-			//t_ind=ind;
-			for(int ind = 0; ind < inc; ind++){
-//			while ((inter==false) & (t_ind < inc-1)){
-//				#pragma omp critical
-//				{
-//					ind++;
-//					t_ind = ind;
-//				}
-//				if(t_ind < inc){
-				if(!inter){
-					if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
-						t_inter=intersect(config[ind],new_ell);
-					}
-
-					if(t_inter){
-						inter=true;
-					}
-				}
-			}
-
 //		inter=false;
-//		ind=0;
-//		while ((inter==false) & (ind < inc)){
-//			if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
-//				inter=intersect(config[ind],new_ell);
+//		//ind=-1;
+//		#pragma omp parallel for private(t_inter/*, t_ind*/) firstprivate(pos,nb_rows,nb_col,a_max,new_ell)
+//			//t_ind=ind;
+//			for(int ind = 0; ind < inc; ind++){
+////			while ((inter==false) & (t_ind < inc-1)){
+////				#pragma omp critical
+////				{
+////					ind++;
+////					t_ind = ind;
+////				}
+////				if(t_ind < inc){
+//				if(!inter){
+//					if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
+//						t_inter=intersect(config[ind],new_ell);
+//					}
+//
+//					if(t_inter){
+//						inter=true;
+//					}
+//				}
 //			}
-//			ind++;
-//		}
+
+		inter=false;
+		ind=0;
+		while ((inter==false) & (ind < inc)){
+			if (is_neighbor(pos,position[ind],nb_rows,nb_col,a_max)){
+				inter=intersect(config[ind],new_ell);
+			}
+			ind++;
+		}
 
 //		if(inter){
 //			cout<<"true"<<endl;
