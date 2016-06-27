@@ -66,10 +66,10 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 		pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
 
 //		inter=false;
-//		ind=-1;
-//		#pragma omp parallel for private(t_inter, t_ind)
+//		//ind=-1;
+//		#pragma omp parallel for private(t_inter/*, t_ind*/)
 //			//t_ind=ind;
-//			for(ind = 0; ind < inc; ind++){
+//			for(int ind = 0; ind < inc; ind++){
 ////			while ((inter==false) & (t_ind < inc-1)){
 ////				#pragma omp critical
 ////				{
@@ -84,7 +84,6 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 //
 //					if(t_inter){
 //						inter=true;
-//						#pragma omp flush(inter)
 //					}
 //				}
 //			}
@@ -107,7 +106,6 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 		if (!(inter)){ // we keep the Ellipse
 			{
 				config[inc]=new_ell;
-				//data_fit[inc]=new_ell.data_fiting(img,size_x,size_y,d);
 				position[inc]=pos;
 				inc++;
 				dont_accepted=0;
