@@ -69,6 +69,7 @@ double shift_cost_exp1( double x, double s)
 
 void grad_X (double * img, double * grad, int size_x, int size_y)
 {
+
 	for (int y = 0; y < size_y; y++)
 	{
 		for (int x = 0; x < size_x-1 ; x++)
@@ -107,6 +108,7 @@ void min_max_val (IplImage* img, double & min_val, double & max_val)
 	uchar *p;
 	p = cvPtr2D (img, 0, 0, NULL);
 	min_val=*p; max_val=*p;
+	#pragma omp parallel for collapse(2)
 	for (int y = 0; y < img->height; y++)
 	{
 		for (int x = 0; x < img->width ; x++)
@@ -123,6 +125,7 @@ void min_max_val (double * mat, double & min_val, double & max_val, int size_x, 
 {
 	max_val=mat[0];
 	min_val=mat[0];
+	#pragma omp parallel for collapse(2)
 	for (int y=0 ; y < size_y ; y++){
 		for (int x =0 ; x < size_x ; x++){
 			min_val=min(min_val,mat[x+y*size_x]);
@@ -138,6 +141,7 @@ void convert_char_to_double(IplImage* img, double * mat)
 	double min_val, max_val;
 	min_max_val(img,min_val,max_val);
 	int size_x=img->width;
+	#pragma omp parallel for collapse(2)
 	for (int y = 0; y < img->height; y++)
 	{
 		for (int x = 0; x < img->width ; x++)
@@ -156,6 +160,7 @@ void convert_double_to_char(IplImage* img, double * mat,double max_val)
 	uchar *p;
 	double min_val_mat, max_val_mat;
 	min_max_val(mat,min_val_mat,max_val_mat,size_x,size_y);
+	#pragma omp parallel for collapse(2)
 	for (int y = 0; y < img->height; y++)
 	{
 		for (int x = 0; x < img->width ; x++)

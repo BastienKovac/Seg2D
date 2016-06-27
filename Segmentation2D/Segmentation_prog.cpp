@@ -41,7 +41,7 @@ int main (int argc, char ** argv)
 	double cpuTime;
 	time_t t = time(NULL);
 
-	start = omp_get_wtime();
+	start = clock();
 
 	// test the good number of arguments
 	if (argc != 2)
@@ -205,21 +205,18 @@ int main (int argc, char ** argv)
 				string file_name = "Segmentation_"+ name + ".txt";
 
 				// Parallelizing image's display
-				#pragma omp parallel num_threads(1) firstprivate(config)
-				{
-					config.save_config(file_name);
-					print = cvCreateImage(cvGetSize(img), 8, 3);
-					cvCvtColor(img, print, CV_GRAY2BGR);
+				config.save_config(file_name);
+				print = cvCreateImage(cvGetSize(img), 8, 3);
+				cvCvtColor(img, print, CV_GRAY2BGR);
 
-					for (int z=0 ; z < nb_ell_config ; z++){
-						{
-							cvEllipse( print, cvPoint(config.get_Ellips(z).get_cx(),config.get_Ellips(z).get_cy()), cvSize(config.get_Ellips(z).get_a(),config.get_Ellips(z).get_b()), -config.get_Ellips(z).get_theta()*360/(2*M_PI), 0, 360, CV_RGB(0, 0, 255), 1, 8, 0);
-						}
+				for (int z=0 ; z < nb_ell_config ; z++){
+					{
+						cvEllipse( print, cvPoint(config.get_Ellips(z).get_cx(),config.get_Ellips(z).get_cy()), cvSize(config.get_Ellips(z).get_a(),config.get_Ellips(z).get_b()), -config.get_Ellips(z).get_theta()*360/(2*M_PI), 0, 360, CV_RGB(0, 0, 255), 1, 8, 0);
 					}
-					cvShowImage (window_title, print);
-					cvWaitKey(1);
-					cvReleaseImage(&print);
 				}
+				cvShowImage (window_title, print);
+				cvWaitKey(1);
+				cvReleaseImage(&print);
 
 			}
 
@@ -227,10 +224,9 @@ int main (int argc, char ** argv)
 			g -> add_node(nb_ell_tot);
 
 			//---- Add the weights of the different edges
-			#pragma omp parallel for
 			for (i = 0 ; i < nb_ell_config ; i++){
 				g -> add_tweights( i,   /* capacities */  config.get_data_fit(i), 1-config.get_data_fit(i) );
-				#pragma omp parallel for
+				#pragma omp parallel for schedule(dynamic)
 				for (j = 0 ; j < nb_ell_new_config ; j++){
 					if (is_neighbor(config.get_position(i),new_config.get_position(j),nb_rows,nb_col,a_max)){
 						if(intersect(config.get_Ellips(i),new_config.get_Ellips(j))){
@@ -325,7 +321,7 @@ int main (int argc, char ** argv)
 		cvWaitKey(1);
 		cvReleaseImage(&print);
 
-		end = omp_get_wtime();
+		end = clock();
 		// compute the executive time
 		cpuTime= (end-start)/ (CLOCKS_PER_SEC);
 		double hours=(cpuTime/double(60))/double(60);

@@ -342,6 +342,7 @@ double Ellips::data_fiting (double * im, int size_x, int size_y, double d) const
 	int i_stop = min(size_x-1,ceil(c[0]+(a+rho)));
 
 	// it first passes through the y because of the structure of the memory : the x are contiguous
+	#pragma omp parallel for reduction(+:mu_in,mu_out,nb_in,nb_out) collapse(2)
 	for (int j=max(0,floor(c[1]-(a+rho))) ; j <= j_stop ; j++){
 		for (int i=max(0,floor(c[0]-(a+rho))) ; i <= i_stop  ; i++){
 			if (bound.inside(i,j,1)){

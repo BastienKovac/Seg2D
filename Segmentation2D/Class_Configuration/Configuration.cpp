@@ -64,7 +64,6 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 		// generation of a new Ellipse
 		Ellips new_ell(a_min,a_max,size_x,size_y);
 		pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
-
 		inter=false;
 		//ind=-1;
 		#pragma omp parallel for private(t_inter/*, t_ind*/)
@@ -125,6 +124,7 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 
 	nb_Ellipses=inc;
 	size=inc;
+
 }
 
 Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,int nb_ell, int nb_dont_accepted, double * grad_x, double * grad_y, double step, double epsilon, double d)
