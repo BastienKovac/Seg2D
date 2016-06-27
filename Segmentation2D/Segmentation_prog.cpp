@@ -210,9 +210,7 @@ int main (int argc, char ** argv)
 				cvCvtColor(img, print, CV_GRAY2BGR);
 
 				for (int z=0 ; z < nb_ell_config ; z++){
-					{
 						cvEllipse( print, cvPoint(config.get_Ellips(z).get_cx(),config.get_Ellips(z).get_cy()), cvSize(config.get_Ellips(z).get_a(),config.get_Ellips(z).get_b()), -config.get_Ellips(z).get_theta()*360/(2*M_PI), 0, 360, CV_RGB(0, 0, 255), 1, 8, 0);
-					}
 				}
 				cvShowImage (window_title, print);
 				cvWaitKey(1);
