@@ -54,7 +54,7 @@ Ellips::Ellips()
 
 Ellips::Ellips(double major_a, double minor_a, double angle, double cx, double cy)
 {
-	a=max(major_a,minor_a); b=min(major_a,minor_a); 
+	a=max(major_a,minor_a); b=min(major_a,minor_a);
 	theta=fmod(angle,double(M_PI)); // to have a number between 0 and pi
 	c[0]=cx; c[1]=cy;
 
@@ -338,10 +338,12 @@ double Ellips::data_fiting (double * im, int size_x, int size_y, double d) const
 	double q;
 	int nb_in=0;
 	int nb_out=0;
+	int j_stop = min(size_y-1,ceil(c[1]+(a+rho)));
+	int i_stop = min(size_x-1,ceil(c[0]+(a+rho)));
 
 	// it first passes through the y because of the structure of the memory : the x are contiguous
-	for (int j=max(0,floor(c[1]-(a+rho))) ; j <= min(size_y-1,ceil(c[1]+(a+rho))) ; j++){
-		for (int i=max(0,floor(c[0]-(a+rho))) ; i <= min(size_x-1,ceil(c[0]+(a+rho))) ; i++){
+	for (int j=max(0,floor(c[1]-(a+rho))) ; j <= j_stop ; j++){
+		for (int i=max(0,floor(c[0]-(a+rho))) ; i <= i_stop  ; i++){
 			if (bound.inside(i,j,1)){
 				if (inside(i,j,1)){
 					mu_in += im[i+j*size_x];
@@ -354,6 +356,7 @@ double Ellips::data_fiting (double * im, int size_x, int size_y, double d) const
 			}
 		}
 	}
+
 	mu_in=mu_in/double(nb_in);
 	mu_out=mu_out/double(nb_out);
 
@@ -389,18 +392,18 @@ double Ellips::data_fiting (double step, double* grad_x , double* grad_y, double
 		// Compute the normal to the Ellipse at the point (x,y)
 		res[0]=x-c[0];
 		res[1]=y-c[1];
-		F77_NAME(dgemv)(&trans,&n,&n,&alpha,&A[0][0],&n,res,&inc,&beta,nor,&inc); 
+		F77_NAME(dgemv)(&trans,&n,&n,&alpha,&A[0][0],&n,res,&inc,&beta,nor,&inc);
 		norme=sqrt(nor[0]*nor[0]+nor[1]*nor[1]);
 		nor[0]=nor[0]/norme;
 		nor[1]=nor[1]/norme;
-			if ((x >= 0) && (x<size_x-1) && (y>=0) && (y<size_y-1)){
-				ix=interp_grad(x,y,grad_x,size_x);
-				iy=interp_grad(x,y,grad_y,size_x);
-				norme=sqrt(ix*ix+iy*iy);
-				u -= r*step*((ix*nor[0]+iy*nor[1])/sqrt(norme*norme+epsilon*epsilon));
-				per += r*step;
-			}
-			th += step;
+		if ((x >= 0) && (x<size_x-1) && (y>=0) && (y<size_y-1)){
+			ix=interp_grad(x,y,grad_x,size_x);
+			iy=interp_grad(x,y,grad_y,size_x);
+			norme=sqrt(ix*ix+iy*iy);
+			u -= r*step*((ix*nor[0]+iy*nor[1])/sqrt(norme*norme+epsilon*epsilon));
+			per += r*step;
+		}
+		th += step;
 	}
 
 	return shift_cost_exp1(u/per,d);

@@ -41,7 +41,7 @@ int main (int argc, char ** argv)
 	double cpuTime;
 	time_t t = time(NULL);
 
-	start = clock();
+	start = omp_get_wtime();
 
 	// test the good number of arguments
 	if (argc != 2)
@@ -157,7 +157,7 @@ int main (int argc, char ** argv)
 	}
 
 	// Definition of a pointer on a GraphType
-	GraphType *g = new GraphType(/*estimated # of nodes*/ nb_cell, /*estimated # of edges*/ nb_cell);
+	GraphType *g = new GraphType(/*estimated # of nodes*/ 4 * nb_ell, /*estimated # of edges*/ 2 * nb_ell * 4);
 
 	// Generation of a first configuration
 	if (choice==1){
@@ -180,7 +180,8 @@ int main (int argc, char ** argv)
 		int k=1;
 
 		cvNamedWindow (window_title, CV_WINDOW_AUTOSIZE);
-		while(num_not_acc<stop){
+		// while(num_not_acc<stop)
+		while(k < 5000){
 
 			//---- Generation of a second configuration
 			if (choice==1){
@@ -245,8 +246,6 @@ int main (int argc, char ** argv)
 			for (i = 0 ; i < nb_ell_new_config ; i++){
 				g -> add_tweights( nb_ell_config + i,   /* capacities */  1-new_config.get_data_fit(i), new_config.get_data_fit(i) );
 			}
-
-			// TODO -> From here
 
 			//---- Compute the max flow of the graph
 			flow = g -> maxflow();
@@ -326,7 +325,7 @@ int main (int argc, char ** argv)
 		cvWaitKey(1);
 		cvReleaseImage(&print);
 
-		end = clock();
+		end = omp_get_wtime();
 		// compute the executive time
 		cpuTime= (end-start)/ (CLOCKS_PER_SEC);
 		double hours=(cpuTime/double(60))/double(60);
