@@ -224,7 +224,6 @@ int main (int argc, char ** argv)
 			//---- Add the weights of the different edges
 			for (i = 0 ; i < nb_ell_config ; i++){
 				g -> add_tweights( i,   /* capacities */  config.get_data_fit(i), 1-config.get_data_fit(i) );
-				#pragma omp parallel for schedule(dynamic)
 				for (j = 0 ; j < nb_ell_new_config ; j++){
 					if (is_neighbor(config.get_position(i),new_config.get_position(j),nb_rows,nb_col,a_max)){
 						if(intersect(config.get_Ellips(i),new_config.get_Ellips(j))){
