@@ -15,7 +15,7 @@
 
 using namespace std;
 
-Configuration:: Configuration()
+Configuration::Configuration()
 {
 	config = new Ellips[1];
 	position = new int[1];
@@ -49,7 +49,7 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	data_fit = new double[nb_ell];
 
 	int dont_accepted=0; // number of Ellipses which aren't accepted
-	int inc;//=0; // number of Ellipses accepted
+	int inc=0; // number of Ellipses accepted
 
 	bool inter, t_inter; // result of the intersection of 2 Ellipses
 	int ind,pos, t_ind, t_inc;
@@ -129,7 +129,6 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 		}
 		if (!(inter)){ // we keep the Ellipse
 			config[inc]=new_ell;
-			//data_fit[inc]=new_ell.data_fiting(step,grad_x,grad_y,epsilon,size_x,size_y,d);
 			position[inc]=pos;
 
 			inc++;
