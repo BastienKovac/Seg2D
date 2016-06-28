@@ -17,10 +17,11 @@ Description:
 #include <iostream>
 #include <ctime>
 #include <fstream>
-#include "Class_Ellips/Ellips.h"
-#include "Graph_Cut/graph.h"
-#include "Class_Configuration/Configuration.h"
-#include "other_functions/other_functions.h"
+#include "../Class_Ellips/Ellips.h"
+#include "../Graph_Cut/graph.h"
+#include "../Class_Configuration/Configuration.h"
+#include "../other_functions/other_functions.h"
+#include "Segmentation_prog.h"
 #include <ctime>
 #include <string>
 #define _USE_MATH_DEFINES
@@ -28,12 +29,15 @@ Description:
 #include <float.h>
 #include <highgui.h>
 #include <cv.h>
+#include <cstdlib>
 
 #include <blas.h>
 #include <lapacke.h>
 #include <omp.h>
 
 using namespace std;
+
+int using_multithread = 1;
 
 int main (int argc, char ** argv)
 {
@@ -67,9 +71,10 @@ int main (int argc, char ** argv)
 	int nb_ell_dont_accepted, nb_ell_tot, nb_ell_config, nb_ell_new_config;
 	double a_min,a_max,min_val,max_val;
 	float flow;
-	int choice,i,j,stop;
+	int choice,i,j,stop, nb_threads;
 	Configuration config,new_config,temp;
 	double d,sigma; //acceptance threshold
+	double epsilon; // For gradient method
 
 	// Definition of the image of type IplImage
 	IplImage* img = NULL;
@@ -101,12 +106,22 @@ int main (int argc, char ** argv)
 		ifile >> st; ifile >> d;
 		ifile >> st; ifile >> stop;
 		ifile >> st; ifile >> sigma;
+		ifile >> st; ifile >> epsilon;
+		ifile >> st; ifile >> nb_threads;
 		ifile.close(); // To close the file
 	}
 	else{
 		cerr << "Error to open the file " << "Parameters.txt" << endl;
 		return 0;
 	} // if(file)
+
+	using_multithread = 1;
+	if (nb_threads == 1) {
+		using_multithread = 0;
+	} else {
+		omp_set_num_threads(nb_threads);
+	}
+
 
 	// Size of the image
 	int size_x=cvGetSize(img).width;
@@ -181,14 +196,14 @@ int main (int argc, char ** argv)
 
 		cvNamedWindow (window_title, CV_WINDOW_AUTOSIZE);
 		// while(num_not_acc<stop)
-		while(k < 5000){
+		while(num_not_acc<stop){
 
 			//---- Generation of a second configuration
 			if (choice==1){
 				new_config=Configuration (a_min,a_max,size_x,size_y,nb_ell,nb_ell_dont_accepted,im,d); // Version 1
 			}
 			if (choice==2){
-				new_config=Configuration(a_min,a_max,size_x,size_y,nb_ell,nb_ell_dont_accepted,gradx,grady,M_PI/12,0.001,d); // Version 2
+				new_config=Configuration(a_min,a_max,size_x,size_y,nb_ell,nb_ell_dont_accepted,gradx,grady,M_PI/12,epsilon,d); // Version 2
 			}
 
 
@@ -210,7 +225,7 @@ int main (int argc, char ** argv)
 				cvCvtColor(img, print, CV_GRAY2BGR);
 
 				for (int z=0 ; z < nb_ell_config ; z++){
-						cvEllipse( print, cvPoint(config.get_Ellips(z).get_cx(),config.get_Ellips(z).get_cy()), cvSize(config.get_Ellips(z).get_a(),config.get_Ellips(z).get_b()), -config.get_Ellips(z).get_theta()*360/(2*M_PI), 0, 360, CV_RGB(0, 0, 255), 1, 8, 0);
+					cvEllipse( print, cvPoint(config.get_Ellips(z).get_cx(),config.get_Ellips(z).get_cy()), cvSize(config.get_Ellips(z).get_a(),config.get_Ellips(z).get_b()), -config.get_Ellips(z).get_theta()*360/(2*M_PI), 0, 360, CV_RGB(0, 0, 255), 1, 8, 0);
 				}
 				cvShowImage (window_title, print);
 				cvWaitKey(1);
@@ -235,7 +250,7 @@ int main (int argc, char ** argv)
 				}
 			}
 
-			#pragma omp parallel for
+			#pragma omp parallel for if(using_multithread)
 			for (i = 0 ; i < nb_ell_new_config ; i++){
 				g -> add_tweights( nb_ell_config + i,   /* capacities */  1-new_config.get_data_fit(i), new_config.get_data_fit(i) );
 			}

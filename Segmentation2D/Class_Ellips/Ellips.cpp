@@ -11,6 +11,7 @@
 #include <blas.h>
 #include <lapacke.h>
 #include "../other_functions/other_functions.h"
+#include "../Main_prog/Segmentation_prog.h"
 
 using namespace std;
 
@@ -342,7 +343,7 @@ double Ellips::data_fiting (double * im, int size_x, int size_y, double d) const
 	int i_stop = min(size_x-1,ceil(c[0]+(a+rho)));
 
 	// it first passes through the y because of the structure of the memory : the x are contiguous
-	#pragma omp parallel for reduction(+:mu_in,mu_out,nb_in,nb_out) collapse(2)
+	#pragma omp parallel for reduction(+:mu_in,mu_out,nb_in,nb_out) collapse(2) if(using_multithread)
 	for (int j=max(0,floor(c[1]-(a+rho))) ; j <= j_stop ; j++){
 		for (int i=max(0,floor(c[0]-(a+rho))) ; i <= i_stop  ; i++){
 			if (bound.inside(i,j,1)){
@@ -386,6 +387,7 @@ double Ellips::data_fiting (double step, double* grad_x , double* grad_y, double
 	double alpha=1.0;
 	double beta=0.0;
 
+	#pragma omp parallel for if(using_multithread)
 	for (int i=0; i<nb ; i++){
 		r=sqrt(a*a*cos(th)*cos(th)+b*b*sin(th)*sin(th));
 		x=c[0]+a*cos(th)*cos(theta)-b*sin(th)*sin(theta);

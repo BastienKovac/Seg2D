@@ -10,12 +10,13 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "../other_functions/other_functions.h"
+#include "../Main_prog/Segmentation_prog.h"
 #include <string>
 #include <omp.h>
 
 using namespace std;
 
-Configuration::Configuration()
+Configuration:: Configuration()
 {
 	config = new Ellips[1];
 	position = new int[1];
@@ -49,7 +50,7 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	data_fit = new double[nb_ell];
 
 	int dont_accepted=0; // number of Ellipses which aren't accepted
-	int inc=0; // number of Ellipses accepted
+	int inc = 0;//=0; // number of Ellipses accepted
 
 	bool inter, t_inter; // result of the intersection of 2 Ellipses
 	int ind,pos, t_ind, t_inc;
@@ -86,12 +87,12 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 			{
 				dont_accepted++;
 			}
-		} // if (!(inter))
-	} // while ((inc<50) & (dont_accepted<10))
+		}
+	}
 
-	#pragma omp parallel for
+	#pragma omp parallel for if(using_multithread)
 	for(int i = 0; i < inc; i++){
-		data_fit[i] = config[i].data_fiting(img,size_x,size_y,d);
+ 		data_fit[i] = config[i].data_fiting(img,size_x,size_y,d);
 	}
 
 	nb_Ellipses=inc;
@@ -136,10 +137,10 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 		}
 		else {
 			dont_accepted++;
-		} // if (ind==inc)
-	} // while ((inc<50) & (dont_accepted<10))
+		}
+	}
 
-	#pragma omp parallel for
+	#pragma omp parallel for if(using_multithread)
 	for(int i = 0; i < inc; i++){
 		data_fit[i] = config[i].data_fiting(step,grad_x,grad_y,epsilon,size_x,size_y,d);
 	}
