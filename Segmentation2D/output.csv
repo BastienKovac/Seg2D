@@ -3,6 +3,7 @@ Results
 ;gradient_mono;;gradient_multi
 
 nb_ellipse; seconds ; energy ; seconds ; energy
+<<<<<<< HEAD
 10;0.105;0.092
 20;0.139;0.124
 30;0.186;0.17
@@ -13,3 +14,15 @@ nb_ellipse; seconds ; energy ; seconds ; energy
 80;0.701;0.638
 90;0.748;0.748
 100;0.888;0.888
+=======
+10;0.075;0.06
+20;0.077;0.062
+30;0.077;0.078
+40;0.077;0.077
+50;0.092;0.092
+60;0.109;0.108
+70;0.125;0.124
+80;0.14;0.14
+90;0.155;0.155
+100;0.186;0.186
+>>>>>>> branch 'master' of https://github.com/BastienKovac/Segmentation2D
