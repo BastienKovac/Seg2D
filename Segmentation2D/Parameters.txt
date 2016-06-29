@@ -21,6 +21,6 @@ embryon
 //epsilon_value_for_gradient
 0.5
 //number_of_threads_to_use
-0
+2
 
 **** Note : See the file "How_to_use" to more information about the parameters 

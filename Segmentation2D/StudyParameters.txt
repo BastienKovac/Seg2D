@@ -5,4 +5,4 @@
 //steps_ellipses
 10
 //number_of_iterations(0_will_fully_complete)
-1000
+10
