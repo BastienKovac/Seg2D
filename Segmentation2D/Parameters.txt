@@ -1,5 +1,5 @@
 //number_of_ellipse_per_configuration
-50
+10
 //number_of_ellipses_dont_accepted_before_stop_generation
 100
 //a_min
@@ -9,7 +9,7 @@
 //estimation_of_the_number_of_cells
 100
 //choice_of_the_cost_function_(1_with_contrast_or_2_with_gradient)
-2
+1
 //name_of_the_output_file(without_the_extention)
 embryon
 //acceptance_threshold_(number_between_0_and_1)
@@ -21,6 +21,6 @@ embryon
 //epsilon_value_for_gradient
 0.5
 //number_of_threads_to_use
-0
+2
 
 **** Note : See the file "How_to_use" to more information about the parameters 

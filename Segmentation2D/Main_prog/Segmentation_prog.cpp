@@ -361,7 +361,7 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 		if (argc == 3) {
 			double total_fit = config.get_data_fit_total();
 			ofstream total_fit_file;
-			total_fit_file.open("Total_Fit.txt", ios_base::app);
+			total_fit_file.open("../Total_Fit.txt", ios_base::app);
 			total_fit_file << total_fit << endl;
 			total_fit_file.close();
 		}
