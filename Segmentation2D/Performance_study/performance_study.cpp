@@ -53,8 +53,8 @@ std::vector<double> test_line(double start, double end, double step,
 		int argc, char ** argv, int nb_iterations, int line_to_modify) {
 
 	// Copy original file
-	ifstream src("Parameters_Model.txt", ios::binary);
-	ofstream dst("Parameters.txt", ios::binary);
+	ifstream src("../Parameters_Model.txt", ios::binary);
+	ofstream dst("../Parameters.txt", ios::binary);
 
 	dst << src.rdbuf();
 
@@ -70,7 +70,7 @@ std::vector<double> test_line(double start, double end, double step,
 	if (inc >= 0) {
 
 		do {
-			edit_line("Parameters.txt", to_string(inc), line_to_modify);
+			edit_line("../Parameters.txt", to_string(inc), line_to_modify);
 			launch = clock();
 			main_logic(argc, argv, nb_iterations);
 			stop = clock();
@@ -92,11 +92,11 @@ void performance_test(int argc, char ** argv) {
 
 	// we reset total_fit content
 	ofstream total_fit_file_reset;
-	total_fit_file_reset.open("Total_Fit.txt");
+	total_fit_file_reset.open("../Total_Fit.txt");
 	total_fit_file_reset.close();
 
 	string st;
-	ifstream ifile("StudyParameters.txt", ios::in); // To open the file
+	ifstream ifile("../StudyParameters.txt", ios::in); // To open the file
 	if (ifile) {
 		ifile >> st;	ifile >> starting_nb_ellipses;
 		ifile >> st;	ifile >> ending_nb_ellipses;
@@ -107,22 +107,22 @@ void performance_test(int argc, char ** argv) {
 	}
 
 	// For gradient
-	edit_line("Parameters.txt", "2", 12);
+	edit_line("../Parameters.txt", "2", 12);
 	// For monothread
-	edit_line("Parameters.txt", "1", 24);
+	edit_line("../Parameters.txt", "1", 24);
 
 	vector<double> grad_mono = test_line(starting_nb_ellipses,
 				ending_nb_ellipses, step_nb_ellipses, argc, argv, nb_iterations, 2);
 
 	// For multithread
-	edit_line("Parameters.txt", "0", 24);
+	edit_line("../Parameters.txt", "0", 24);
 
 	vector<double> grad_multi = test_line(starting_nb_ellipses,
 				ending_nb_ellipses, step_nb_ellipses, argc, argv, nb_iterations, 2);
 
 	// Copy original file
-	ifstream src("Parameters_Model.txt", ios::binary);
-	ofstream dst("Parameters.txt", ios::binary);
+	ifstream src("../Parameters_Model.txt", ios::binary);
+	ofstream dst("../Parameters.txt", ios::binary);
 
 	dst << src.rdbuf();
 
@@ -158,7 +158,7 @@ void performance_test(int argc, char ** argv) {
 
 	//Write csv file
 	ofstream csv_file;
-	csv_file.open("output.csv");
+	csv_file.open("../output.csv");
 
 	csv_file << "Results" << endl;
 	csv_file << endl;
