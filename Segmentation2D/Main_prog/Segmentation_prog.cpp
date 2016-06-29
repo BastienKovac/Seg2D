@@ -92,7 +92,7 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 
 	string st, name;
 	// Reading of the parameters in the file Parameters.txt
-	ifstream ifile("../Parameters_Model.txt", ios::in); // To open the file
+	ifstream ifile("../Parameters.txt", ios::in); // To open the file
 	if (ifile) {
 		ifile >> st;	ifile >> nb_ell;
 		ifile >> st;	ifile >> nb_ell_dont_accepted;
@@ -108,7 +108,7 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 		ifile >> st;	ifile >> nb_threads;
 		ifile.close(); // To close the file
 	} else {
-		cerr << "Error to open the file " << "../Parameters_Model.txt" << endl;
+		cerr << "Error to open the file " << "../Parameters.txt" << endl;
 		return 0;
 	} // if(file)
 
