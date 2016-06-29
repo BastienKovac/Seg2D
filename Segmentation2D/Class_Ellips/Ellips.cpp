@@ -376,11 +376,10 @@ double Ellips::data_fiting (double step, double* grad_x , double* grad_y, double
 	double u=0;
 
 	// discretisation [0:2pi]
-	int nb = 0;//int(2*M_PI/step);
+	int nb = int(2*M_PI/step);
 
 	double r,th=0;
-	double /*x,y,*/norme, ix,iy;
-	int x,y;
+	double x,y,norme, ix,iy;
 	double nor[2],res[2];
 
 	// Parameters for the BLAS functions

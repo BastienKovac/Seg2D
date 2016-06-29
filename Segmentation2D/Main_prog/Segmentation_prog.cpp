@@ -195,7 +195,7 @@ int main (int argc, char ** argv)
 		int k=1;
 
 		cvNamedWindow (window_title, CV_WINDOW_AUTOSIZE);
-		// while(num_not_acc<stop)
+
 		while(num_not_acc<stop){
 
 			//---- Generation of a second configuration
