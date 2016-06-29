@@ -22,6 +22,4 @@ std::string to_string(double nb);
 std::vector<double> test_line(double start, double end, double step,
 		int argc, char ** argv, int nb_iterations, int line_to_modify);
 
-std::string getline(std::ifstream file, int nb_line);
-
 #endif /* PERFORMANCE_STUDY_PERFORMANCE_STUDY_H_ */

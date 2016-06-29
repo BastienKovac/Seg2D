@@ -116,7 +116,9 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 	if (nb_threads == 1) {
 		using_multithread = 0;
 	} else {
-		omp_set_num_threads(nb_threads);
+		if (nb_threads != 0) {
+			omp_set_num_threads(nb_threads);
+		}
 	}
 
 	// Size of the image
@@ -184,7 +186,7 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 	}
 	if (choice == 2) {
 		config = Configuration(a_min, a_max, size_x, size_y, nb_ell,
-				nb_ell_dont_accepted, gradx, grady, M_PI / 12, 0.001, d); // Version 2
+				nb_ell_dont_accepted, gradx, grady, M_PI / 12, epsilon, d); // Version 2
 	}
 
 	try {
@@ -351,19 +353,19 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 			}
 			k++;
 
-			if (argc == 3) {
-				double total_fit = config.get_data_fit_total();
-				ofstream total_fit_file;
-				total_fit_file.open("Total_Fit.txt", ios_base::app);
-				total_fit_file << total_fit << endl;
-				total_fit_file.close();
-			}
-
 			if (nb_iterations != 0 && k == nb_iterations) {
 				break;
 			}
 
 		} // while(num_not_acc<30000)
+
+		if (argc == 3) {
+			double total_fit = config.get_data_fit_total();
+			ofstream total_fit_file;
+			total_fit_file.open("Total_Fit.txt", ios_base::app);
+			total_fit_file << total_fit << endl;
+			total_fit_file.close();
+		}
 
 		// We save the segmentation
 		string file_name = "Segmentation_" + name + ".txt";

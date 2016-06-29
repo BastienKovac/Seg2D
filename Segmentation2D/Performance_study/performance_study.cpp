@@ -23,26 +23,6 @@ string to_string(double nb) {
 	return static_cast<ostringstream*>( &(ostringstream() << nb) )->str();
 }
 
-string getline(string file_name, int nb_line) {
-
-	string line = "";
-	ifstream file(file_name.c_str());
-	int nbline = 0;
-
-	while(!file.eof()) {
-		getline(file, line);
-		if (nbline == nb_line - 1) {
-			break;
-		}
-		nbline++;
-	}
-
-	file.close();
-
-	return line;
-
-}
-
 void edit_line(std::string file_name, std::string new_value, int nb_line) {
 
 	vector<string> lines;
@@ -126,21 +106,7 @@ void performance_test(int argc, char ** argv) {
 		cerr << "Error to open the file " << "StudyParameters.txt" << endl;
 	}
 
-	// For first method
-	edit_line("Parameters.txt", "1", 12);
-	// For monothread
-	edit_line("Parameters.txt", "1", 24);
-
-	vector<double> contrast_mono = test_line(starting_nb_ellipses,
-			ending_nb_ellipses, step_nb_ellipses, argc, argv, nb_iterations, 2);
-
-	// For multithread
-	edit_line("Parameters.txt", "0", 24);
-
-	vector<double> contrast_multi = test_line(starting_nb_ellipses,
-				ending_nb_ellipses, step_nb_ellipses, argc, argv, nb_iterations, 2);
-
-	// For second method
+	// For gradient
 	edit_line("Parameters.txt", "2", 12);
 	// For monothread
 	edit_line("Parameters.txt", "1", 24);
@@ -176,25 +142,13 @@ void performance_test(int argc, char ** argv) {
 
 	for (int i = 0 ; i < nb_ell.size() ; i++) {
 		line = (to_string(nb_ell[i]) + ";"
-				+ to_string(contrast_mono[i]) + ";"
-				+ getline(total_fit_file, i) + ";"
-				+ to_string(contrast_multi[i]) + ";"
-				+ getline(total_fit_file, i + 0 * nb_ell.size()) + ";"
 				+ to_string(grad_mono[i]) + ";"
-				+ getline(total_fit_file, i + 2 * nb_ell.size()) + ";"
-				+ to_string(grad_multi[i])
-				+ getline(total_fit_file, i + 3 * nb_ell.size()) + ";");
+				+ to_string(grad_multi[i]));
 		lines.push_back(line);
 	}
 
 	nb_ell.clear();
 	vector<int>().swap(nb_ell);
-
-	contrast_mono.clear();
-	vector<double>().swap(contrast_mono);
-
-	contrast_multi.clear();
-	vector<double>().swap(contrast_multi);
 
 	grad_mono.clear();
 	vector<double>().swap(grad_mono);
@@ -208,9 +162,9 @@ void performance_test(int argc, char ** argv) {
 
 	csv_file << "Results" << endl;
 	csv_file << endl;
-	csv_file << ";contrast_mono;;contrast_multi;;gradient_mono;;gradient_multi" << endl;
+	csv_file << ";gradient_mono;;gradient_multi" << endl;
 	csv_file << endl;
-	csv_file << "nb_ellipse; seconds ; energy ; seconds ; energy ; seconds ; energy ; seconds ; energy" << endl;
+	csv_file << "nb_ellipse; seconds ; energy ; seconds ; energy" << endl;
 	for (int i = 0 ; i < lines.size() ; i++) {
 		csv_file << lines[i] << endl;
 	}
