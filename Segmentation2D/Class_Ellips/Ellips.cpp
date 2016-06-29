@@ -12,6 +12,7 @@
 #include <lapacke.h>
 #include "../other_functions/other_functions.h"
 #include "../Main_prog/Segmentation_prog.h"
+#include <vector>
 
 using namespace std;
 
@@ -375,10 +376,11 @@ double Ellips::data_fiting (double step, double* grad_x , double* grad_y, double
 	double u=0;
 
 	// discretisation [0:2pi]
-	int nb = int(2*M_PI/step);
+	int nb = 0;//int(2*M_PI/step);
 
 	double r,th=0;
-	double x,y,norme, ix,iy;
+	double /*x,y,*/norme, ix,iy;
+	int x,y;
 	double nor[2],res[2];
 
 	// Parameters for the BLAS functions
@@ -387,11 +389,16 @@ double Ellips::data_fiting (double step, double* grad_x , double* grad_y, double
 	double alpha=1.0;
 	double beta=0.0;
 
+	double ctheta=cos(theta);
+	double stheta=sin(theta);
 	#pragma omp parallel for if(using_multithread)
 	for (int i=0; i<nb ; i++){
-		r=sqrt(a*a*cos(th)*cos(th)+b*b*sin(th)*sin(th));
-		x=c[0]+a*cos(th)*cos(theta)-b*sin(th)*sin(theta);
-		y=c[1]+a*cos(th)*sin(theta)+b*sin(th)*cos(theta);
+		double cth=cos(th);
+		double sth=sin(th);
+
+		r=sqrt(a*a*cth*cth+b*b*sth*sth);
+		x=c[0]+a*cth*ctheta-b*sth*stheta;
+		y=c[1]+a*cth*stheta+b*sth*ctheta;
 		// Compute the normal to the Ellipse at the point (x,y)
 		res[0]=x-c[0];
 		res[1]=y-c[1];
