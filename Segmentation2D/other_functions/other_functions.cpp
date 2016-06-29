@@ -10,6 +10,10 @@
 #include <highgui.h>
 #include <cv.h>
 
+#ifndef M_PI
+	#define M_PI           3.14159265358979323846264338327
+#endif
+
 using namespace std;
 
 int ij_to_k (int i , int  j, double size_x, double size_y, double a_max)

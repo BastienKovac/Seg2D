@@ -80,6 +80,8 @@ public :
 	//-- To get the data_fit at the index i in the array data_fit
 	double get_data_fit(int i);
 
+	double get_data_fit_total();
+
 	//-- To get the number of Ellipses in the configuration
 	int get_nb_Ellipses();
 

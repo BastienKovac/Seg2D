@@ -11,5 +11,7 @@
 
 extern int using_multithread;
 
+int main_logic(int argc, char** argv, int nb_iterations);
+
 
 #endif /* SEGMENTATION_PROG_H_ */

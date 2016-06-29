@@ -253,3 +253,14 @@ void Configuration::save_config(string file_name)
 	} // if(file)
 }
 
+double Configuration::get_data_fit_total() {
+
+	double res = 0;
+	for (int i = 0 ; i < nb_Ellipses ; i++) {
+		res += data_fit[i];
+	}
+
+	return res;
+
+}
+
