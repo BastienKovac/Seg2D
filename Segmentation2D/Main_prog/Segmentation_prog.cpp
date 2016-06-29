@@ -198,11 +198,6 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 		bool accepted = false;
 		int num_not_acc = 0;
 		int k = 1;
-
-		cvNamedWindow(window_title, CV_WINDOW_AUTOSIZE);
-		// while(num_not_acc<stop)
-		while (num_not_acc < stop) {
-
 		cvNamedWindow (window_title, CV_WINDOW_AUTOSIZE);
 
 		while(num_not_acc<stop){
