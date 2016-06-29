@@ -12,7 +12,10 @@
 #include <lapacke.h>
 #include "../other_functions/other_functions.h"
 #include "../Main_prog/Segmentation_prog.h"
+#undef max
 #include <vector>
+#define max(a,b) (a>=b?a:b)
+
 
 using namespace std;
 
