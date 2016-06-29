@@ -23,6 +23,20 @@ string to_string(double nb) {
 	return static_cast<ostringstream*>( &(ostringstream() << nb) )->str();
 }
 
+string get_line(string file_name, int nb_line) {
+
+	string line;
+
+	ifstream file(file_name.c_str());
+	for (int i = 0 ; i < nb_line ; ++i) {
+		getline(file, line);
+	}
+	getline(file, line);
+	file.close();
+	return line;
+
+}
+
 void edit_line(std::string file_name, std::string new_value, int nb_line) {
 
 	vector<string> lines;
@@ -140,10 +154,14 @@ void performance_test(int argc, char ** argv) {
 
 	string total_fit_file = "Total_Fit";
 
+
+
 	for (int i = 0 ; i < nb_ell.size() ; i++) {
 		line = (to_string(nb_ell[i]) + ";"
 				+ to_string(grad_mono[i]) + ";"
-				+ to_string(grad_multi[i]));
+				+ get_line("../Total_Fit.txt", i) + ";"
+				+ to_string(grad_multi[i]) + ";"
+				+ get_line("../Total_Fit.txt", i + nb_ell.size()));
 		lines.push_back(line);
 	}
 
@@ -160,7 +178,7 @@ void performance_test(int argc, char ** argv) {
 	ofstream csv_file;
 	csv_file.open("../output.csv");
 
-	csv_file << "Results" << endl;
+	csv_file << "Results for " << nb_iterations << " iterations" << endl;
 	csv_file << endl;
 	csv_file << ";gradient_mono;;gradient_multi" << endl;
 	csv_file << endl;

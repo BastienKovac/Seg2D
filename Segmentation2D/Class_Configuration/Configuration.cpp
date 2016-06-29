@@ -257,7 +257,7 @@ double Configuration::get_data_fit_total() {
 
 	double res = 0;
 	for (int i = 0 ; i < nb_Ellipses ; i++) {
-		res += (1 - 2 *data_fit[i]);
+		res += (data_fit[i] - 1);
 	}
 
 	return res;

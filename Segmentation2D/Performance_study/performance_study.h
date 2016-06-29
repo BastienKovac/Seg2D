@@ -19,6 +19,8 @@ void edit_line(std::string file_name, std::string new_value, int nb_line);
 
 std::string to_string(double nb);
 
+std::string get_line(std::string file_name, int nb_line);
+
 std::vector<double> test_line(double start, double end, double step,
 		int argc, char ** argv, int nb_iterations, int line_to_modify);
 
