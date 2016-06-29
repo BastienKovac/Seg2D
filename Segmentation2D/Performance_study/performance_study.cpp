@@ -165,15 +165,6 @@ void performance_test(int argc, char ** argv) {
 		lines.push_back(line);
 	}
 
-	nb_ell.clear();
-	vector<int>().swap(nb_ell);
-
-	grad_mono.clear();
-	vector<double>().swap(grad_mono);
-
-	grad_multi.clear();
-	vector<double>().swap(grad_multi);
-
 	//Write csv file
 	ofstream csv_file;
 	csv_file.open("../output.csv");
