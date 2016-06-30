@@ -13,7 +13,7 @@ Description :
 #ifndef Ellips_H
 #define Ellips_H
 
-#include <highgui.h>
+#include "opencv/highgui.h"
 
 class Ellips
 {

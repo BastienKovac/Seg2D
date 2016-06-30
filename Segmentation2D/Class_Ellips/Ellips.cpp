@@ -8,14 +8,14 @@
 #include <stdlib.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <blas.h>
+#include <cblas.h>
 #include <lapacke.h>
 #include "../other_functions/other_functions.h"
 #include "../Main_prog/Segmentation_prog.h"
 #undef max
 #include <vector>
 #define max(a,b) (a>=b?a:b)
-
+#define min(a,b) (a<=b?a:b)
 
 using namespace std;
 

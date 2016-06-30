@@ -27,11 +27,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <float.h>
-#include <highgui.h>
-#include <cv.h>
+#include "opencv/highgui.h"
+#include "opencv/cv.h"
 #include <cstdlib>
 
-#include <blas.h>
 #include <lapacke.h>
 #include <omp.h>
 

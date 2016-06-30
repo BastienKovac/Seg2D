@@ -10,13 +10,13 @@ Description :
 #ifndef OTHER_FUNCTIONS_H
 #define OTHER_FUNCTIONS_H
 
-#include <highgui.h>
+#include "opencv/highgui.h"
 
 //-- Definition of a function max
-#define max(a,b) (a>=b?a:b)
+#define Max(a,b) (a>=b?a:b)
 
 //-- Definition of a function min
-#define min(a,b) (a<=b?a:b)
+#define Min(a,b) (a<=b?a:b)
 
 //-- To know the number of the bax (i,j) in the grid (reshape grid => vector)
 int ij_to_k (int i , int  j, double size_x, double size_y, double a_max);
