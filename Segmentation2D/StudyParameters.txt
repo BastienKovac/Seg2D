@@ -4,9 +4,9 @@
 100
 //steps_ellipses
 10
-//number_of_iterations(0_will_fully_complete)
-<<<<<<< HEAD
-100
-=======
-10
->>>>>>> branch 'master' of https://github.com/BastienKovac/Segmentation2D
+//starting_number_of_iterations(0_will_fully_complete)
+1000
+//ending_number_of_iterations
+2000
+//step_nb_iterations
+1000

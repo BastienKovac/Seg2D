@@ -9,7 +9,7 @@
 //estimation_of_the_number_of_cells
 100
 //choice_of_the_cost_function_(1_with_contrast_or_2_with_gradient)
-1
+2
 //name_of_the_output_file(without_the_extention)
 embryon
 //acceptance_threshold_(number_between_0_and_1)

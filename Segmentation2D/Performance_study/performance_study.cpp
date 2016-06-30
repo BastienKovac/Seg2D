@@ -66,19 +66,8 @@ void edit_line(std::string file_name, std::string new_value, int nb_line) {
 std::vector<double> test_line(double start, double end, double step,
 		int argc, char ** argv, int nb_iterations, int line_to_modify) {
 
-	// Copy original file
-	ifstream src("../Parameters_Model.txt", ios::binary);
-	ofstream dst("../Parameters.txt", ios::binary);
-
-	dst << src.rdbuf();
-
-	src.close();
-	dst.close();
-
 	int inc = start;
-
 	int launch, stop;
-
 	vector<double> results;
 
 	if (inc >= 0) {
@@ -88,8 +77,9 @@ std::vector<double> test_line(double start, double end, double step,
 			launch = clock();
 			main_logic(argc, argv, nb_iterations);
 			stop = clock();
-			inc += step;
 			results.push_back((double) (stop - launch) / double(CLOCKS_PER_SEC));
+			cout << "\t" << inc << "/" << end << " done" << endl;
+			inc += step;
 		} while (!(inc > end));
 
 	}
@@ -102,7 +92,7 @@ void performance_test(int argc, char ** argv) {
 
 	int starting_nb_ellipses, ending_nb_ellipses, step_nb_ellipses;
 
-	int nb_iterations;
+	int nb_iterations_start, nb_iterations_end, nb_iterations_step, nb_iterations;
 
 	// we reset total_fit content
 	ofstream total_fit_file_reset;
@@ -115,69 +105,97 @@ void performance_test(int argc, char ** argv) {
 		ifile >> st;	ifile >> starting_nb_ellipses;
 		ifile >> st;	ifile >> ending_nb_ellipses;
 		ifile >> st;	ifile >> step_nb_ellipses;
-		ifile >> st;	ifile >> nb_iterations;
+		ifile >> st;	ifile >> nb_iterations_start;
+		ifile >> st;	ifile >> nb_iterations_end;
+		ifile >> st;	ifile >> nb_iterations_step;
 	} else {
 		cerr << "Error to open the file " << "StudyParameters.txt" << endl;
 	}
 
-	// For gradient
-	edit_line("../Parameters.txt", "2", 12);
-	// For monothread
-	edit_line("../Parameters.txt", "1", 24);
+	for (int nb_iterations = nb_iterations_start;
+			nb_iterations <= nb_iterations_end; nb_iterations +=
+					nb_iterations_step) {
 
-	vector<double> grad_mono = test_line(starting_nb_ellipses,
-				ending_nb_ellipses, step_nb_ellipses, argc, argv, nb_iterations, 2);
+		// Copy original file
+		ifstream src("../Parameters_Model.txt", ios::binary);
+		ofstream dst("../Parameters.txt", ios::binary);
 
-	// For multithread
-	edit_line("../Parameters.txt", "0", 24);
+		dst << src.rdbuf();
 
-	vector<double> grad_multi = test_line(starting_nb_ellipses,
-				ending_nb_ellipses, step_nb_ellipses, argc, argv, nb_iterations, 2);
+		src.close();
+		dst.close();
 
-	// Copy original file
-	ifstream src("../Parameters_Model.txt", ios::binary);
-	ofstream dst("../Parameters.txt", ios::binary);
+		cout << "For " << nb_iterations << " iterations..." << endl;
 
-	dst << src.rdbuf();
+		// For gradient
+		edit_line("../Parameters.txt", "2", 12);
+		// For monothread
+		edit_line("../Parameters.txt", "1", 24);
 
-	vector<int> nb_ell;
+		cout << "Testing number of ellipses for monothread ..." << endl;
 
-	int inc = starting_nb_ellipses;
+		vector<double> grad_mono = test_line(starting_nb_ellipses,
+				ending_nb_ellipses, step_nb_ellipses, argc, argv, nb_iterations,
+				2);
 
-	do {
-		nb_ell.push_back(inc);
-		inc += step_nb_ellipses;
-	} while (!(inc > ending_nb_ellipses));
+		cout << "Done" << endl;
 
-	vector<string> lines;
-	string line;
+		// For multithread
+		edit_line("../Parameters.txt", "0", 24);
 
-	string total_fit_file = "Total_Fit";
+		cout << "Testing number of ellipses for multithread ..." << endl;
 
+		vector<double> grad_multi = test_line(starting_nb_ellipses,
+				ending_nb_ellipses, step_nb_ellipses, argc, argv, nb_iterations,
+				2);
 
+		cout << "Done" << endl;
 
-	for (int i = 0 ; i < nb_ell.size() ; i++) {
-		line = (to_string(nb_ell[i]) + ";"
-				+ to_string(grad_mono[i]) + ";"
-				+ get_line("../Total_Fit.txt", i) + ";"
-				+ to_string(grad_multi[i]) + ";"
-				+ get_line("../Total_Fit.txt", i + nb_ell.size()));
-		lines.push_back(line);
+		vector<int> nb_ell;
+
+		int inc = starting_nb_ellipses;
+
+		do {
+			nb_ell.push_back(inc);
+			inc += step_nb_ellipses;
+		} while (!(inc > ending_nb_ellipses));
+
+		vector<string> lines;
+		string line;
+
+		string total_fit_file = "Total_Fit";
+
+		vector<int> nb_it;
+		vector<double> final_energy;
+
+		for (int i = 1000; i <= 10000; i += 1000) {
+			nb_it.push_back(i);
+		}
+
+		for (int i = 0; i < nb_ell.size(); i++) {
+			line = (to_string(nb_ell[i]) + ";" + to_string(grad_mono[i]) + ";"
+					+ get_line("../Total_Fit.txt", i) + ";"
+					+ to_string(grad_multi[i]) + ";"
+					+ get_line("../Total_Fit.txt", i + nb_ell.size()));
+			lines.push_back(line);
+		}
+
+		//Write csv file
+		ofstream csv_file;
+		csv_file.open("../output.csv");
+
+		csv_file << "Results for " << nb_iterations << " iterations" << endl;
+		csv_file << endl;
+		csv_file << ";gradient_mono;;gradient_multi" << endl;
+		csv_file << endl;
+		csv_file << "nb_ellipse;Seconds;Final energy;Seconds;Final energy"
+				<< endl;
+		for (int i = 0; i < lines.size(); i++) {
+			csv_file << lines[i] << endl;
+		}
+
+		csv_file.close();
+
 	}
-
-	//Write csv file
-	ofstream csv_file;
-	csv_file.open("../output.csv");
-
-	csv_file << "Results for " << nb_iterations << " iterations" << endl;
-	csv_file << endl;
-	csv_file << ";gradient_mono;;gradient_multi" << endl;
-	csv_file << endl;
-	csv_file << "nb_ellipse; seconds ; energy ; seconds ; energy" << endl;
-	for (int i = 0 ; i < lines.size() ; i++) {
-		csv_file << lines[i] << endl;
-	}
-
-	csv_file.close();
 
 }

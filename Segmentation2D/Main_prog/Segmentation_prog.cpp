@@ -198,8 +198,9 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 		bool accepted = false;
 		int num_not_acc = 0;
 		int k = 1;
-		cvNamedWindow (window_title, CV_WINDOW_AUTOSIZE);
-
+		if (argc == 2) {
+			cvNamedWindow (window_title, CV_WINDOW_AUTOSIZE);
+		}
 		while(num_not_acc<stop){
 
 			//---- Generation of a second configuration
@@ -220,7 +221,7 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 			// total number of Ellipse (with the two configurations)
 			nb_ell_tot = nb_ell_config + nb_ell_new_config;
 
-			if (fmod(float(k), 1000) == 0) {
+			if (fmod(float(k), 1000) == 0 && argc == 2) {
 				cout << "Iteration : " << k << endl;
 				cout << "Total execution time : " << difftime(time(NULL), t)
 						<< "s" << endl;
@@ -364,6 +365,8 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 			total_fit_file.open("../Total_Fit.txt", ios_base::app);
 			total_fit_file << total_fit << endl;
 			total_fit_file.close();
+			delete g;
+			return 1;
 		}
 
 		// We save the segmentation
