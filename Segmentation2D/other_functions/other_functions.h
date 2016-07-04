@@ -11,6 +11,13 @@ Description :
 #define OTHER_FUNCTIONS_H
 
 #include "opencv/highgui.h"
+#include "opencv/cv.h"
+#include <iostream>
+#include <math.h>
+
+#ifndef M_PI
+	#define M_PI           3.14159265358979323846264338327
+#endif
 
 //-- Definition of a function max
 #define Max(a,b) (a>=b?a:b)

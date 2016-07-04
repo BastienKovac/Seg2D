@@ -5,19 +5,25 @@
  *      Author: bastien.kovac
  */
 
-#include <string>
-#undef max
-#include <vector>
 
 #ifndef PERFORMANCE_STUDY_PERFORMANCE_STUDY_H_
 #define PERFORMANCE_STUDY_PERFORMANCE_STUDY_H_
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <sstream>
+#include <iostream>
+#include <ctime>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <vector>
+#include "../Main_prog/Segmentation_prog.h"
 
 // Loops the main algorithm according to the StudyParameters file and print the results in an output csv file
 void performance_test(int argc, char ** argv);
 
 void edit_line(std::string file_name, std::string new_value, int nb_line);
-
-std::string to_string(double nb);
 
 std::string get_line(std::string file_name, int nb_line);
 

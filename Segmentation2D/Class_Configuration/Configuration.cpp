@@ -3,18 +3,7 @@
 	source file
 ---------------------------------------------*/
 
-#include "../Class_Ellips/Ellips.h"
 #include "Configuration.h"
-#include <iostream>
-#include <fstream>
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include "../other_functions/other_functions.h"
-#include "../Main_prog/Segmentation_prog.h"
-#include <string>
-#include <omp.h>
-
-using namespace std;
 
 Configuration:: Configuration()
 {
@@ -52,8 +41,8 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	int dont_accepted=0; // number of Ellipses which aren't accepted
 	int inc = 0;//=0; // number of Ellipses accepted
 
-	bool inter, t_inter; // result of the intersection of 2 Ellipses
-	int ind,pos, t_ind, t_inc;
+	bool inter; // result of the intersection of 2 Ellipses
+	int ind,pos;
 
 	// grid 
 	int nb_rows = ceil(size_y/a_max);
@@ -64,7 +53,7 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	while ((inc<nb_ell) & (dont_accepted<nb_dont_accepted)){
 		// generation of a new Ellipse
 		Ellips new_ell(a_min,a_max,size_x,size_y);
-		pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
+		pos=Min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+Max(1,ceil(new_ell.get_cx()/a_max));
 
 		inter=false;
 		ind=0;
@@ -118,7 +107,7 @@ Configuration::Configuration(double a_min, double a_max, int size_x, int size_y,
 	while ((inc<nb_ell) & (dont_accepted<nb_dont_accepted)){
 		// generation of a new Ellipse
 		Ellips new_ell(a_min,a_max,size_x,size_y);
-		pos=min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+max(1,ceil(new_ell.get_cx()/a_max));
+		pos=Min(nb_rows-1,floor(new_ell.get_cy()/a_max))*nb_col+Max(1,ceil(new_ell.get_cx()/a_max));
 
 		inter=false;
 		ind=0;
@@ -238,18 +227,18 @@ void Configuration::add_Ellips(const Ellips & ell,int pos, double fit)
 
 }
 
-void Configuration::save_config(string file_name)
+void Configuration::save_config(std::string file_name)
 {
-	ofstream file(file_name.c_str(), ios::out | ios::trunc); // To open the file
+	std::ofstream file(file_name.c_str(), std::ios::out | std::ios::trunc); // To open the file
 	if(file) {
-		file << nb_Ellipses << endl;
+		file << nb_Ellipses << std::endl;
 		for (int i = 0 ; i < nb_Ellipses ; i++){
-			file << config[i].get_a() << "\t" << config[i].get_b() << "\t" << config[i].get_theta() << "\t" << config[i].get_cx() << "\t" << config[i].get_cy() << endl;
+			file << config[i].get_a() << "\t" << config[i].get_b() << "\t" << config[i].get_theta() << "\t" << config[i].get_cx() << "\t" << config[i].get_cy() << std::endl;
 		}
 		file.close(); // To close the file
 	}
 	else{
-		cerr << "Error to open the file " << file_name << endl;
+		std::cerr << "Error to open the file " << file_name << std::endl;
 	} // if(file)
 }
 
@@ -263,4 +252,3 @@ double Configuration::get_data_fit_total() {
 	return res;
 
 }
-

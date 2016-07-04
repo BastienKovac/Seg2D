@@ -1,4 +1,7 @@
-/* ---------- Principal program ------------
+/* -----
+
+	return 0;
+----- Principal program ------------
  file Segmentation_prog.cpp  Modified on 09/07/1012
  source file
 
@@ -12,29 +15,7 @@
  - Segmentation_name.png -> image of the segmentation
  ---------------------------------------------*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <ctime>
-#include <fstream>
-#include <string>
-#include "../Class_Ellips/Ellips.h"
-#include "../Graph_Cut/graph.h"
-#include "../Class_Configuration/Configuration.h"
-#include "../other_functions/other_functions.h"
-#include "../Performance_study/performance_study.h"
 #include "Segmentation_prog.h"
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include <float.h>
-#include "opencv/highgui.h"
-#include "opencv/cv.h"
-#include <cstdlib>
-
-#include <lapacke.h>
-#include <omp.h>
-
-using namespace std;
 
 int using_multithread = 1;
 
@@ -48,8 +29,8 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 
 	// test the good number of arguments
 	if (argc != 2 && argc != 3) {
-		cout << "Wrong number of arguments" << endl;
-		cout << "Usage: " << argv[0] << "  Image_name" << endl;
+		std::cout << "Wrong number of arguments" << std::endl;
+		std::cout << "Usage: " << argv[0] << "  Image_name" << std::endl;
 		return 1;
 	}
 
@@ -85,13 +66,13 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 	// Loading the image
 	img = cvLoadImage(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
 	if (img == NULL) {
-		cout << "couldn't open image file: " << argv[1] << endl;
+		std::cout << "couldn't open image file: " << argv[1] << std::endl;
 		return 1;
 	}
 
-	string st, name;
+	std::string st, name;
 	// Reading of the parameters in the file Parameters.txt
-	ifstream ifile("../Parameters.txt", ios::in); // To open the file
+	std::ifstream ifile("../Parameters.txt", std::ios::in); // To open the file
 	if (ifile) {
 		ifile >> st;	ifile >> nb_ell;
 		ifile >> st;	ifile >> nb_ell_dont_accepted;
@@ -107,7 +88,7 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 		ifile >> st;	ifile >> nb_threads;
 		ifile.close(); // To close the file
 	} else {
-		cerr << "Error to open the file " << "../Parameters.txt" << endl;
+		std::cerr << "Error to open the file " << "../Parameters.txt" << std::endl;
 		return 0;
 	} // if(file)
 
@@ -141,7 +122,7 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 			convert_double_to_char(print, im, max_val);
 			cvNamedWindow(window_title_smooth, CV_WINDOW_AUTOSIZE);
 			cvShowImage(window_title_smooth, print);
-			cout << "Press enter to continue" << endl;
+			std::cout << "Press enter to continue" << std::endl;
 			cvWaitKey(0);
 			cvDestroyAllWindows();
 			cvReleaseImage(&print);
@@ -156,7 +137,7 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 			convert_double_to_char(print, gradx, max_val);
 			cvNamedWindow(window_title_gradx, CV_WINDOW_AUTOSIZE);
 			cvShowImage(window_title_gradx, print);
-			cout << "Press enter to continue" << endl;
+			std::cout << "Press enter to continue" << std::endl;
 			cvWaitKey(0);
 			cvDestroyAllWindows();
 			cvReleaseImage(&print);
@@ -166,7 +147,7 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 			convert_double_to_char(print, grady, max_val);
 			cvNamedWindow(window_title_grady, CV_WINDOW_AUTOSIZE);
 			cvShowImage(window_title_grady, print);
-			cout << "Press enter to continue" << endl;
+			std::cout << "Press enter to continue" << std::endl;
 			cvWaitKey(0);
 			cvDestroyAllWindows();
 			cvReleaseImage(&print);
@@ -221,10 +202,10 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 			nb_ell_tot = nb_ell_config + nb_ell_new_config;
 
 			if (fmod(float(k), 1000) == 0 && argc == 2) {
-				cout << "Iteration : " << k << endl;
-				cout << "Total execution time : " << difftime(time(NULL), t)
-						<< "s" << endl;
-				string file_name = "Segmentation_" + name + ".txt";
+				std::cout << "Iteration : " << k << std::endl;
+				std::cout << "Total execution time : " << difftime(time(NULL), t)
+						<< "s" << std::endl;
+				std::string file_name = "Segmentation_" + name + ".txt";
 
 				config.save_config(file_name);
 				print = cvCreateImage(cvGetSize(img), 8, 3);
@@ -360,19 +341,19 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 
 		if (argc == 3) {
 			double total_fit = config.get_data_fit_total();
-			ofstream total_fit_file;
-			total_fit_file.open("../Total_Fit.txt", ios_base::app);
-			total_fit_file << total_fit << endl;
+			std::ofstream total_fit_file;
+			total_fit_file.open("../Total_Fit.txt", std::ios_base::app);
+			total_fit_file << total_fit << std::endl;
 			total_fit_file.close();
 			delete g;
 			return 1;
 		}
 
 		// We save the segmentation
-		string file_name = "Segmentation_" + name + ".txt";
+		std::string file_name = "Segmentation_" + name + ".txt";
 		config.save_config(file_name);
-		cout << "\nNumber of Ellipses found : " << config.get_nb_Ellipses()
-				<< endl;
+		std::cout << "\nNumber of Ellipses found : " << config.get_nb_Ellipses()
+				<< std::endl;
 
 		// We save an image
 		file_name = "Segmentation_" + name + ".png";
@@ -397,21 +378,23 @@ int main_logic(int argc, char** argv, int nb_iterations = 0) {
 		double hours = (cpuTime / double(60)) / double(60);
 		double minuts = (hours - floor(hours)) * double(60);
 		double second = (minuts - floor(minuts)) * double(60);
-		cout << "\nCPU Time : " << floor(hours) << " hours " << floor(minuts)
-				<< " minuts " << second << " seconds " << endl;
+		std::cout << "\nCPU Time : " << floor(hours) << " hours " << floor(minuts)
+				<< " minuts " << second << " seconds " << std::endl;
 
 		// Clean of the memory
 		cvReleaseImage(&img);
 		delete g;
-	} catch (exception const& e) // We catch the exceptions.
+	} catch (std::exception const& e) // We catch the exceptions.
 	{
-		cout << "ERREUR : " << e.what() << endl; // We plot the exceptions.
+		std::cout << "ERROR : " << e.what() << std::endl; // We plot the exceptions.
 	}
 
 	return 1;
 }
 
 int main(int argc, char ** argv) {
+
+	std::cout << "Entering main.." << std::flush;
 
 	if (argc == 2) {
 		main_logic(argc, argv);

@@ -13,7 +13,13 @@ Description :
 #ifndef Ellips_H
 #define Ellips_H
 
+class Matrix;
+
+#include <stdlib.h>
 #include "opencv/highgui.h"
+#include "../Class_Matrix/Matrix.h"
+#include "../other_functions/other_functions.h"
+#include "../Main_prog/Segmentation_prog.h"
 
 class Ellips
 {
@@ -106,10 +112,18 @@ public:
 private:
 
 	double a,b,theta; // a : Semi major axis, b : Semi minor axis, theta : angle with horizontal
-	double A[2][2]; // matrix of the bilinear form which represent the Ellipse
-	double A_demi[2][2]; // root of A such as A_demi*A_demi=A
-	double A_inv_demi[2][2]; // inverse of A_demi
+
+	Matrix A;
+	//double A[2][2]; // matrix of the bilinear form which represent the Ellipse
+
+	Matrix A_demi;
+	//double A_demi[2][2]; // root of A such as A_demi*A_demi=A
+
+	Matrix A_inv_demi;
+	//double A_inv_demi[2][2]; // inverse of A_demi
+
 	double c[2]; // vector which contains the coordinates of the center of the Ellipse
+
 
 };
 

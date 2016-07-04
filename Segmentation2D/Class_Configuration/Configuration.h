@@ -12,10 +12,16 @@ Description :
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-#include "../Class_Ellips/Ellips.h"
-#include <string>
+class Ellips;
 
-using namespace std;
+#include <iostream>
+#include <fstream>
+#include <math.h>
+#include <string>
+#include <omp.h>
+#include "../Class_Ellips/Ellips.h"
+#include "../other_functions/other_functions.h"
+#include "../Main_prog/Segmentation_prog.h"
 
 class Configuration
 {
@@ -93,7 +99,7 @@ public :
 	void add_Ellips(const Ellips & ell,int pos, double fit);
 
 	//-- To save the parameters of the Ellipses into a file
-	void save_config(string file_name);
+	void save_config(std::string file_name);
 
 private :
 

@@ -3,18 +3,7 @@
 	source file
 ---------------------------------------------*/
 
-#include <iostream>
-#define _USE_MATH_DEFINES
-#include <math.h>
 #include "other_functions.h"
-#include "opencv/highgui.h"
-#include "opencv/cv.h"
-
-#ifndef M_PI
-	#define M_PI           3.14159265358979323846264338327
-#endif
-
-using namespace std;
 
 int ij_to_k (int i , int  j, double size_x, double size_y, double a_max)
 {
@@ -22,11 +11,11 @@ int ij_to_k (int i , int  j, double size_x, double size_y, double a_max)
 	int nb_col = ceil(size_x/a_max);
 
 	if (i> nb_rows){
-		cout << " Index i out of the image " << endl;
+		std::cout << " Index i out of the image " << std::endl;
 		return 0;
 	}
 	else{ if (j> nb_col){
-		cout << " Index j out of the image" << endl;
+		std::cout << " Index j out of the image" << std::endl;
 		return 0;
 		}
 		else {
@@ -38,7 +27,7 @@ int ij_to_k (int i , int  j, double size_x, double size_y, double a_max)
 void k_to_ij (int k,int & i, int & j,int nb_rows , int nb_col, double a_max)
 {
 	if (k > nb_rows*nb_col){
-		cout << "Index k out of the image " << k << endl;
+		std::cout << "Index k out of the image " << k << std::endl;
 	}
 	else {
 		i=ceil(float(k)/float(nb_col));
@@ -52,7 +41,7 @@ bool is_neighbor (int k1,int k2,int nb_rows , int nb_col, double a_max)
 	k_to_ij(k1,i1,j1,nb_rows,nb_col,a_max);
 	k_to_ij(k2,i2,j2,nb_rows,nb_col,a_max);
 
-	if ((i2 >= max(1,i1-2)) & (i2 <= min(nb_rows,i1+2)) & (j2 >= max(1,j1-2)) & (j2 <= min(nb_col,j1+2))){
+	if ((i2 >= Max(1,i1-2)) & (i2 <= Min(nb_rows,i1+2)) & (j2 >= Max(1,j1-2)) & (j2 <= Min(nb_col,j1+2))){
 		return true;
 	}
 	else{
@@ -118,8 +107,8 @@ void min_max_val (IplImage* img, double & min_val, double & max_val)
 		{
 			// pointer on the pixel of the images
 			p = cvPtr2D (img, y, x, NULL);
-			min_val=min(min_val,(double)(*p));
-			max_val=max(max_val,(double)(*p));
+			min_val=Min(min_val,(double)(*p));
+			max_val=Max(max_val,(double)(*p));
 		}
 	}
 }
@@ -130,8 +119,8 @@ void min_max_val (double * mat, double & min_val, double & max_val, int size_x, 
 	min_val=mat[0];
 	for (int y=0 ; y < size_y ; y++){
 		for (int x =0 ; x < size_x ; x++){
-			min_val=min(min_val,mat[x+y*size_x]);
-			max_val=max(max_val,mat[x+y*size_x]);
+			min_val=Min(min_val,mat[x+y*size_x]);
+			max_val=Max(max_val,mat[x+y*size_x]);
 		}
 	}
 
